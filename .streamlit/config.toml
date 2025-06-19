@@ -1,7 +1,7 @@
 [theme]
-base = "light"
-primaryColor = "#1565C0"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#FFFDE7"
-textColor = "#212121"
+base = "dark"
+primaryColor = "#FFCA28"                # Kuning
+backgroundColor = "#121212"             # Abu gelap
+secondaryBackgroundColor = "#1E1E1E"    # Abu kehitaman
+textColor = "#FFFFFF"
 font = "sans serif"
