@@ -58,7 +58,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ------------------ HEADER ------------------ #
-st.markdown("<h1>💰 Kalkulator Nepi</h1>", unsafe_allow_html=True)
+st.markdown("<h1>💰 Kalkulator Nepidil</h1>", unsafe_allow_html=True)
 st.markdown("<p>Pantau pemasukan dan pengeluaran nepidil</p>", unsafe_allow_html=True)
 
 # ------------------ GOOGLE SHEETS ------------------ #
