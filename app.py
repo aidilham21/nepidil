@@ -13,27 +13,26 @@ st.markdown("""
 <style>
     html, body, [class*="css"] {
         font-family: 'Segoe UI', sans-serif;
-        background-color: #FFFDE7; /* kuning pastel */
-        color: #212121;
+        background-color: #121212;
+        color: #FFFFFF;
     }
 
     h1 {
         text-align: center;
-        color: #1565C0; /* biru */
+        color: #FFCA28; /* kuning */
     }
 
     p {
         text-align: center;
         font-size: 16px;
-        color: #424242;
+        color: #CCCCCC;
         margin-top: -10px;
     }
 
     .stButton > button {
-        background-color: #FFCA28 !important; /* kuning */
+        background-color: #FFCA28 !important;
         color: black;
         font-weight: bold;
-        border: none;
         border-radius: 6px;
         padding: 0.5em 1.2em;
     }
@@ -43,24 +42,24 @@ st.markdown("""
         color: black;
     }
 
-    .st-emotion-cache-1c7y2kd, .st-emotion-cache-1avcm0n {
-        border: 1px solid #1565C0;
-        border-radius: 10px;
-        padding: 1.5rem;
-        background-color: #FFFFFF;
+    .st-expander {
+        background-color: #1E1E1E;
+        border: 1px solid #FFCA28;
+        border-radius: 6px;
     }
 
-    .st-expander {
-        background-color: #FFF9C4;
-        border: 1px solid #1565C0;
-        border-radius: 6px;
+    .st-emotion-cache-1c7y2kd, .st-emotion-cache-1avcm0n {
+        border: 1px solid #FFCA28;
+        border-radius: 10px;
+        padding: 1.5rem;
+        background-color: #1E1E1E;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ------------------ HEADER ------------------ #
 st.markdown("<h1>💰 Kalkulator Nepi</h1>", unsafe_allow_html=True)
-st.markdown("<p>Pantau pemasukan dan pengeluaran dengan warna khas Nepi 💙💛</p>", unsafe_allow_html=True)
+st.markdown("<p>Pantau pemasukan dan pengeluaran nepidil</p>", unsafe_allow_html=True)
 
 # ------------------ GOOGLE SHEETS ------------------ #
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -126,6 +125,6 @@ else:
 st.markdown("<hr style='margin-top: 30px;'>", unsafe_allow_html=True)
 st.markdown("""
 <p style='text-align: center; font-size: 13px; color: gray;'>
-💙💛 Dibuat oleh Aidil untuk Nepi System • Streamlit + Google Sheets • © 2025
+Dibuat oleh Aidil untuk Nepi © 2025
 </p>
 """, unsafe_allow_html=True)
