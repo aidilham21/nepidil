@@ -5,28 +5,40 @@ from datetime import datetime
 import pandas as pd
 import json
 
-# ------------------ CONFIG ------------------ #
+# ---------- CONFIG ---------- #
 st.set_page_config(page_title="Kalkulator Nepi", page_icon="💰", layout="centered")
 
+# ---------- STYLE ---------- #
 st.markdown("""
 <style>
+    html, body, [class*="css"] {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #F9FAFB;
+    }
     h1 {
         text-align: center;
-        color: #2E7D32;
+        color: #1565C0; /* biru */
     }
-    .stApp {
-        background-color: #FAFAFA;
+    .stButton>button {
+        background-color: #FFCA28 !important; /* kuning */
+        color: black;
+        font-weight: bold;
+    }
+    .stButton>button:hover {
+        background-color: #FFC107 !important;
+        color: black;
     }
     .metric-label {
+        color: #1565C0;
         font-size: 14px;
     }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<h1>💰 Kalkulator Nepi</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>Pantau pemasukan & pengeluaran Nepi secara real-time</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>Pantau pemasukan dan pengeluaran dengan warna khas Nepi</p>", unsafe_allow_html=True)
 
-# ------------------ GOOGLE SHEETS ------------------ #
+# ---------- GOOGLE SHEETS SETUP ---------- #
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
@@ -39,7 +51,7 @@ except gspread.exceptions.WorksheetNotFound:
     sheet = client.open_by_key(SHEET_ID).add_worksheet(title="Data", rows="1000", cols="4")
     sheet.append_row(["waktu", "jenis", "keterangan", "jumlah"])
 
-# ------------------ FORM INPUT ------------------ #
+# ---------- FORM INPUT ---------- #
 with st.form("form_input", clear_on_submit=True):
     st.subheader("📝 Tambah Transaksi")
     jenis = st.selectbox("Jenis Transaksi", ["Pemasukan", "Pengeluaran"])
@@ -52,7 +64,7 @@ with st.form("form_input", clear_on_submit=True):
         sheet.append_row([waktu, jenis, keterangan, jumlah])
         st.success("✅ Data berhasil disimpan!")
 
-# ------------------ AMBIL DATA ------------------ #
+# ---------- AMBIL & TAMPILKAN DATA ---------- #
 try:
     data = sheet.get_all_records()
     if not data:
@@ -63,7 +75,6 @@ except Exception as e:
     st.error(f"Gagal ambil data: {e}")
     data = []
 
-# ------------------ TAMPILKAN DATA ------------------ #
 if data:
     df = pd.DataFrame(data)
     df['jumlah'] = pd.to_numeric(df['jumlah'], errors='coerce').fillna(0)
@@ -87,10 +98,10 @@ if data:
 else:
     st.info("Belum ada data transaksi.")
 
-# ------------------ FOOTER ------------------ #
+# ---------- FOOTER ---------- #
 st.markdown("<hr style='margin-top: 30px;'>", unsafe_allow_html=True)
 st.markdown("""
 <p style='text-align: center; font-size: 13px; color: gray;'>
-Dibuat oleh Aidil untuk Nepi System • Streamlit + Google Sheets • © 2025
+Dibuat oleh Aidil untuk Nepi © 2025
 </p>
 """, unsafe_allow_html=True)
