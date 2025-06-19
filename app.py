@@ -5,63 +5,92 @@ from datetime import datetime
 import pandas as pd
 import json
 
-st.set_page_config(page_title="Kalkulator Nepi", page_icon="💰")
-st.title("💰 Kalkulator Pemasukan & Pengeluaran Nepi")
+# ------------------ CONFIG ------------------ #
+st.set_page_config(page_title="Kalkulator Nepi", page_icon="💰", layout="centered")
 
-# Autentikasi Google Sheets
+st.markdown("""
+<style>
+    h1 {
+        text-align: center;
+        color: #2E7D32;
+    }
+    .stApp {
+        background-color: #FAFAFA;
+    }
+    .metric-label {
+        font-size: 14px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("<h1>💰 Kalkulator Nepi</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>Pantau pemasukan & pengeluaran Nepi secara real-time</p>", unsafe_allow_html=True)
+
+# ------------------ GOOGLE SHEETS ------------------ #
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds_dict = json.loads(st.secrets["GOOGLE_SHEETS_CREDENTIALS"])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 
-# ID dan worksheet Google Sheets
 SHEET_ID = "1CRHQlKgtYIzut1BahDqakVjBfRaYCRSCowCuV1u1jAE"
 try:
     sheet = client.open_by_key(SHEET_ID).worksheet("Data")
 except gspread.exceptions.WorksheetNotFound:
-    # Buat worksheet jika belum ada
-    spreadsheet = client.open_by_key(SHEET_ID)
-    sheet = spreadsheet.add_worksheet(title="Data", rows="1000", cols="4")
+    sheet = client.open_by_key(SHEET_ID).add_worksheet(title="Data", rows="1000", cols="4")
     sheet.append_row(["waktu", "jenis", "keterangan", "jumlah"])
 
-# Form Input
-with st.form("form_input"):
-    st.subheader("📝 Masukkan Data Baru")
-    jenis = st.selectbox("Jenis", ["Pemasukan", "Pengeluaran"])
+# ------------------ FORM INPUT ------------------ #
+with st.form("form_input", clear_on_submit=True):
+    st.subheader("📝 Tambah Transaksi")
+    jenis = st.selectbox("Jenis Transaksi", ["Pemasukan", "Pengeluaran"])
     keterangan = st.text_input("Keterangan")
     jumlah = st.number_input("Jumlah (Rp)", min_value=0, step=1000)
-    submit = st.form_submit_button("Simpan")
+    submit = st.form_submit_button("💾 Simpan")
 
     if submit and keterangan and jumlah > 0:
         waktu = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         sheet.append_row([waktu, jenis, keterangan, jumlah])
-        st.success("✅ Data berhasil disimpan ke Google Sheets!")
+        st.success("✅ Data berhasil disimpan!")
 
-# Ambil data dari Google Sheets
+# ------------------ AMBIL DATA ------------------ #
 try:
     data = sheet.get_all_records()
+    if not data:
+        headers = sheet.row_values(1)
+        if headers != ["waktu", "jenis", "keterangan", "jumlah"]:
+            sheet.insert_row(["waktu", "jenis", "keterangan", "jumlah"], 1)
 except Exception as e:
-    st.error(f"Gagal mengambil data: {e}")
+    st.error(f"Gagal ambil data: {e}")
     data = []
 
-# Tampilkan riwayat
-st.subheader("📄 Riwayat Transaksi (10 Terakhir)")
-
+# ------------------ TAMPILKAN DATA ------------------ #
 if data:
     df = pd.DataFrame(data)
     df['jumlah'] = pd.to_numeric(df['jumlah'], errors='coerce').fillna(0)
     df['waktu'] = pd.to_datetime(df['waktu'], errors='coerce')
 
-    st.dataframe(df.tail(10)[['waktu', 'jenis', 'keterangan', 'jumlah']], use_container_width=True)
-
-    # Ringkasan
     pemasukan = df[df['jenis'] == 'Pemasukan']['jumlah'].sum()
     pengeluaran = df[df['jenis'] == 'Pengeluaran']['jumlah'].sum()
     sisa = pemasukan - pengeluaran
 
-    st.subheader("📊 Ringkasan:")
-    st.write(f"💵 Total Pemasukan: Rp{pemasukan:,.0f}")
-    st.write(f"🧾 Total Pengeluaran: Rp{pengeluaran:,.0f}")
-    st.success(f"💰 Sisa Uang: Rp{sisa:,.0f}")
+    st.markdown("---")
+    st.subheader("📊 Ringkasan Keuangan")
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Pemasukan", f"Rp{pemasukan:,.0f}")
+    col2.metric("Pengeluaran", f"Rp{pengeluaran:,.0f}")
+    col3.metric("Sisa Uang", f"Rp{sisa:,.0f}")
+
+    with st.expander("📄 Lihat Riwayat Transaksi"):
+        st.dataframe(df[['waktu', 'jenis', 'keterangan', 'jumlah']].sort_values(by="waktu", ascending=False),
+                     use_container_width=True)
 else:
-    st.info("Belum ada data transaksi. Silakan masukkan data pertama kamu.")
+    st.info("Belum ada data transaksi.")
+
+# ------------------ FOOTER ------------------ #
+st.markdown("<hr style='margin-top: 30px;'>", unsafe_allow_html=True)
+st.markdown("""
+<p style='text-align: center; font-size: 13px; color: gray;'>
+Dibuat oleh Aidil untuk Nepi System • Streamlit + Google Sheets • © 2025
+</p>
+""", unsafe_allow_html=True)
