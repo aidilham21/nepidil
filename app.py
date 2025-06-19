@@ -40,12 +40,6 @@ with st.form("form_input"):
 # Ambil data dari Google Sheets
 try:
     data = sheet.get_all_records()
-if not data:
-    # Cek apakah header sudah ada, kalau belum, tambahkan
-    headers = sheet.row_values(1)
-    expected_headers = ["waktu", "jenis", "keterangan", "jumlah"]
-    if headers != expected_headers:
-        sheet.insert_row(expected_headers, 1)
 except Exception as e:
     st.error(f"Gagal mengambil data: {e}")
     data = []
