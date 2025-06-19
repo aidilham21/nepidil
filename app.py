@@ -16,7 +16,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 
 # Ganti ini dengan ID Google Sheets kamu
-SHEET_ID = "ISI_DENGAN_ID_SHEET_KAMU"
+SHEET_ID = "1CRHQlKgtYIzut1BahDqakVjBfRaYCRSCowCuV1u1jAE"
 sheet = client.open_by_key(SHEET_ID).worksheet("Data")
 
 # Form input
